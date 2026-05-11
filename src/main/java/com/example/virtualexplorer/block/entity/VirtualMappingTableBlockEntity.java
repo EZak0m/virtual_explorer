@@ -134,8 +134,8 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
         }
         @Override
         public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            // 出力スロットのみ搬出を許可
-            if (slot < 6) return ItemStack.EMPTY;
+            // 出力スロット(6-13)のみ搬出を許可。フィルター(14)等は除外。
+            if (slot < 6 || slot == 14) return ItemStack.EMPTY;
             return inventory.extractItem(slot, amount, simulate);
         }
         @Override
@@ -456,7 +456,7 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
 
             // TargetPinのバイオームフィルタをチェック
             String targetBiomeId = null;
-            ItemStack pinStack = inventory.getStackInSlot(14);
+            ItemStack pinStack = inventory.getSlots() > 14 ? inventory.getStackInSlot(14) : ItemStack.EMPTY;
             if (!pinStack.isEmpty() && pinStack.getItem() instanceof com.example.virtualexplorer.item.TargetPinItem) {
                 net.minecraft.world.item.component.CustomData customData = pinStack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
                 if (customData != null) {
@@ -556,7 +556,22 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
     @Override
     protected void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
+        // ItemStackHandler.deserializeNBTは"Size"タグでインスタンスのサイズを上書きしてしまうため、
+        // 既存ワールド（旧サイズ14）での読み込み時にサイズが14に戻ってしまい、15番目のスロットアクセスでクラッシュします。
+        // これを防ぐため、手動でItemsリストから読み込みます。
+        if (tag.contains("Inventory")) {
+            CompoundTag invTag = tag.getCompound("Inventory");
+            if (invTag.contains("Items", 9)) {
+                net.minecraft.nbt.ListTag list = invTag.getList("Items", 10);
+                for (int i = 0; i < list.size(); i++) {
+                    CompoundTag itemTag = list.getCompound(i);
+                    int slot = itemTag.getInt("Slot");
+                    if (slot >= 0 && slot < inventory.getSlots()) {
+                        inventory.setStackInSlot(slot, ItemStack.parseOptional(registries, itemTag));
+                    }
+                }
+            }
+        }
         energyStorage.deserializeNBT(registries, tag.get("Energy"));
         
         if (tag.contains("Fluid")) {
