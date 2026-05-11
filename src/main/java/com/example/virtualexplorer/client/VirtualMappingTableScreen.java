@@ -81,9 +81,11 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         }
 
         // デバッグ座標表示
-        int relX = mouseX - i;
-        int relY = mouseY - j;
-        guiGraphics.drawString(this.font, "Mouse: " + relX + ", " + relY, i + 5, j + this.imageHeight - 15, 0xFFFFFF, true);
+        if (GUISettings.SHOW_DEBUG_COORDINATES) {
+            int relX = mouseX - i;
+            int relY = mouseY - j;
+            guiGraphics.drawString(this.font, "Mouse: " + relX + ", " + relY, i + 5, j + this.imageHeight - 15, 0xFFFFFF, true);
+        }
     }
 
     @Override
@@ -121,6 +123,17 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
         
+        // プログレスバー ツールチップ
+        if (mouseX >= i + GUISettings.PROGRESS_X && mouseX <= i + GUISettings.PROGRESS_X + GUISettings.PROGRESS_W &&
+            mouseY >= j + GUISettings.PROGRESS_Y && mouseY <= j + GUISettings.PROGRESS_Y + GUISettings.PROGRESS_H) {
+            int progress = this.menu.getRawProgress();
+            int max = this.menu.getMaxProgress();
+            if (max > 0) {
+                int percent = (progress * 100) / max;
+                guiGraphics.renderTooltip(this.font, Component.literal(percent + "% (" + progress + " / " + max + " ticks)"), mouseX, mouseY);
+            }
+        }
+
         if (mouseX >= i + GUISettings.ENERGY_BAR_X && mouseX <= i + GUISettings.ENERGY_BAR_X + GUISettings.BAR_WIDTH && 
             mouseY >= j + GUISettings.ENERGY_BAR_Y && mouseY <= j + GUISettings.ENERGY_BAR_Y + GUISettings.ENERGY_BAR_H) {
             guiGraphics.renderTooltip(this.font, Component.literal(this.menu.getEnergy() + " / " + this.menu.getMaxEnergy() + " FE"), mouseX, mouseY);
@@ -130,4 +143,5 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
             guiGraphics.renderTooltip(this.font, Component.literal(this.menu.getFluidAmount() + " / 10000 mB"), mouseX, mouseY);
         }
     }
+
 }

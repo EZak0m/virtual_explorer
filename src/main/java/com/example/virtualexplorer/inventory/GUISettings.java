@@ -45,7 +45,7 @@ public class GUISettings {
     public static final int PROGRESS_W = 100; // 長さ
     public static final int PROGRESS_H = 10; // 太さ
 
-    public static final int ENERGY_BAR_X = 199;
+    public static final int ENERGY_BAR_X = 201;
     public static final int ENERGY_BAR_Y = 13;
     public static final int ENERGY_BAR_H = 40;
     public static final int BAR_WIDTH = 8; // バーの太さ
@@ -59,4 +59,7 @@ public class GUISettings {
     public static final int GRID_CELL_SIZE = 8;
 
     public static final int STATUS_TEXT_Y = 95;
+
+    // --- デバッグ設定 ---
+    public static final boolean SHOW_DEBUG_COORDINATES = false; // マウス座標を表示するかどうか
 }
