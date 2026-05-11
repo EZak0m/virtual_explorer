@@ -44,7 +44,7 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
-        guiGraphics.blit(TEXTURE, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(TEXTURE, i, j, 0f, 0f, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         
         // プログレスバー (矢印)
         int scaledProgress = this.menu.getScaledProgress();

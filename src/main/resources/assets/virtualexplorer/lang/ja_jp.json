@@ -1,5 +1,5 @@
 {
-  "itemGroup.virtualexplorer": "Virtual Explorer",
+  "itemGroup.virtualexplorer.explorer_tab": "Virtual Explorer",
   "block.virtualexplorer.virtual_mapping_table": "仮想探索機",
   
   "item.virtualexplorer.module_surface": "地上探索モジュール",
@@ -24,8 +24,8 @@
   "item.virtualexplorer.upgrade_fluid.description": "探索中に発見した流体（水や溶岩）をタンクに回収します。",
   "item.virtualexplorer.upgrade_archeology": "発掘調査の刷毛",
   "item.virtualexplorer.upgrade_archeology.description": "砂漠の寺院などの構造物で考古学的な調査を行い、貴重な品を発見します。",
-  "item.virtualexplorer.upgrade_demolition": "解体の匠",
-  "item.virtualexplorer.upgrade_demolition.description": "周辺のブロックを解体し、建築資材として回収します。",
+  "item.virtualexplorer.upgrade_demolition_master": "解体の匠",
+  "item.virtualexplorer.upgrade_demolition_master.description": "周辺のブロックを解体し、建築資材として回収します。",
   "item.virtualexplorer.upgrade_structure_interest": "構造物への興味",
   "item.virtualexplorer.upgrade_structure_interest.description": "近くの構造物を自動的にターゲットにし、そこへ向かって移動します。",
   "item.virtualexplorer.upgrade_infinite": "無限の可能性",
@@ -40,8 +40,10 @@
   "tooltip.virtualexplorer.hold_shift": "§7[Shift] を押して詳細を表示",
   "tooltip.virtualexplorer.energy_cost": "§9基本消費FE: %s FE/tick",
   "tooltip.virtualexplorer.process_time": "§6基本処理時間: %s ticks",
-  "tooltip.virtualexplorer.target_pin.target": "ターゲット: %s",
-  "tooltip.virtualexplorer.target_pin.unconfigured": "スニーク＋右クリック（オフハンドに対象アイテム）でターゲットを設定",
+  "tooltip.virtualexplorer.target_pin.structure": "§bターゲット(構造物): %s",
+  "tooltip.virtualexplorer.target_pin.biome": "§aターゲット(バイオーム): %s",
+  "tooltip.virtualexplorer.target_pin.unconfigured": "設定されていません",
+  "tooltip.virtualexplorer.target_pin.usage": "§8[右クリック] 現在地の構造物/バイオームを記録",
   "tooltip.virtualexplorer.fluid.empty": "空",
 
   "gui.virtualexplorer.status.0": "§8停止中",
@@ -60,6 +62,7 @@
   "structure.virtualexplorer.4": "エンドシティ",
   "structure.virtualexplorer.5": "砂漠の寺院",
 
-  "message.virtualexplorer.target_pin.set": "ターゲットを設定しました: %s",
+  "message.virtualexplorer.target_pin.set_structure": "ターゲット（構造物）を設定しました: %s",
+  "message.virtualexplorer.target_pin.set_biome": "ターゲット（バイオーム）を設定しました: %s",
   "message.virtualexplorer.target_pin.cleared": "ターゲットをクリアしました。"
 }

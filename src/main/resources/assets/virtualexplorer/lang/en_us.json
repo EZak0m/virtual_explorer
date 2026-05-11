@@ -1,5 +1,5 @@
 {
-  "itemGroup.virtualexplorer": "Virtual Explorer",
+  "itemGroup.virtualexplorer.explorer_tab": "Virtual Explorer",
   "block.virtualexplorer.virtual_mapping_table": "Virtual Mapping Table",
   
   "item.virtualexplorer.module_surface": "Surface Explorer Module",
@@ -24,8 +24,8 @@
   "item.virtualexplorer.upgrade_fluid.description": "Collects fluids (water, lava) discovered during exploration into the tank.",
   "item.virtualexplorer.upgrade_archeology": "Archeology Brush Upgrade",
   "item.virtualexplorer.upgrade_archeology.description": "Conducts archaeological surveys in structures like Desert Pyramids to find rare items.",
-  "item.virtualexplorer.upgrade_demolition": "Demolition Master Upgrade",
-  "item.virtualexplorer.upgrade_demolition.description": "Demolishes surrounding blocks and collects them as construction materials.",
+  "item.virtualexplorer.upgrade_demolition_master": "Demolition Master",
+  "item.virtualexplorer.upgrade_demolition_master.description": "Demolishes surrounding blocks and collects them as construction materials.",
   "item.virtualexplorer.upgrade_structure_interest": "Structure Interest Upgrade",
   "item.virtualexplorer.upgrade_structure_interest.description": "Automatically targets nearby structures and moves towards them.",
   "item.virtualexplorer.upgrade_infinite": "Infinite Possibility Upgrade",
@@ -40,8 +40,10 @@
   "tooltip.virtualexplorer.hold_shift": "§7Hold [Shift] for details",
   "tooltip.virtualexplorer.energy_cost": "§9Base FE Cost: %s FE/tick",
   "tooltip.virtualexplorer.process_time": "§6Base Process Time: %s ticks",
-  "tooltip.virtualexplorer.target_pin.target": "Target: %s",
-  "tooltip.virtualexplorer.target_pin.unconfigured": "Sneak+Right-Click with an item in offhand to set target",
+  "tooltip.virtualexplorer.target_pin.structure": "§bTarget (Structure): %s",
+  "tooltip.virtualexplorer.target_pin.biome": "§aTarget (Biome): %s",
+  "tooltip.virtualexplorer.target_pin.unconfigured": "Not configured",
+  "tooltip.virtualexplorer.target_pin.usage": "§8[Right Click] Save current structure/biome",
   "tooltip.virtualexplorer.fluid.empty": "Empty",
 
   "gui.virtualexplorer.status.0": "§8IDLE",
@@ -60,6 +62,7 @@
   "structure.virtualexplorer.4": "End City",
   "structure.virtualexplorer.5": "Desert Pyramid",
 
-  "message.virtualexplorer.target_pin.set": "Target set to: %s",
+  "message.virtualexplorer.target_pin.set_structure": "Target set (Structure): %s",
+  "message.virtualexplorer.target_pin.set_biome": "Target set (Biome): %s",
   "message.virtualexplorer.target_pin.cleared": "Target cleared."
 }
