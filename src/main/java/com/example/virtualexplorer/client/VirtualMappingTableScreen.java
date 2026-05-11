@@ -2,13 +2,12 @@ package com.example.virtualexplorer.client;
 
 import com.example.virtualexplorer.VirtualExplorer;
 import com.example.virtualexplorer.inventory.VirtualMappingTableMenu;
+import com.example.virtualexplorer.inventory.GUISettings;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 
 public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMappingTableMenu> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(VirtualExplorer.MODID, "textures/gui/virtual_mapping_table.png");
@@ -17,12 +16,12 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
 
     public VirtualMappingTableScreen(VirtualMappingTableMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 256;
-        this.imageHeight = 220;
-        this.titleLabelX = 48;
-        this.titleLabelY = 8;
-        this.inventoryLabelX = 47;
-        this.inventoryLabelY = 110;
+        this.imageWidth = GUISettings.WIDTH;
+        this.imageHeight = GUISettings.HEIGHT;
+        this.titleLabelX = GUISettings.TITLE_X;
+        this.titleLabelY = GUISettings.TITLE_Y;
+        this.inventoryLabelX = GUISettings.INV_LABEL_X;
+        this.inventoryLabelY = GUISettings.INV_LABEL_Y;
     }
 
     @Override
@@ -35,7 +34,7 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
             button -> {
                 this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 0);
             })
-            .bounds(i + 25, j + 85, 30, 16)
+            .bounds(i + GUISettings.TOGGLE_BTN_X, j + GUISettings.TOGGLE_BTN_Y, 30, 16)
             .build();
         this.addRenderableWidget(this.toggleBtn);
     }
@@ -49,36 +48,42 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         // プログレスバー (矢印)
         int scaledProgress = this.menu.getScaledProgress();
         if (scaledProgress > 0) {
-            guiGraphics.fill(i + 55, j + 45, i + 55 + scaledProgress, j + 49, 0xFF00FF00);
+            guiGraphics.fill(i + GUISettings.PROGRESS_X, j + GUISettings.PROGRESS_Y, i + GUISettings.PROGRESS_X + scaledProgress, j + GUISettings.PROGRESS_Y + 4, 0xFF00FF00);
         }
         
         // エネルギーバー (右側)
-        int scaledEnergy = this.menu.getScaledEnergy(60);
+        int scaledEnergy = this.menu.getScaledEnergy(GUISettings.ENERGY_BAR_H);
         if (scaledEnergy > 0) {
-            guiGraphics.fill(i + 180, j + 20 + 60 - scaledEnergy, i + 188, j + 80, 0xFFFF0000);
+            guiGraphics.fill(i + GUISettings.ENERGY_BAR_X, j + GUISettings.ENERGY_BAR_Y + GUISettings.ENERGY_BAR_H - scaledEnergy, i + GUISettings.ENERGY_BAR_X + 8, j + GUISettings.ENERGY_BAR_Y + GUISettings.ENERGY_BAR_H, 0xFFFF0000);
         }
 
         // 流体バー (右側)
-        int scaledFluid = this.menu.getScaledFluid(60);
+        int scaledFluid = this.menu.getScaledFluid(GUISettings.FLUID_BAR_H);
         if (scaledFluid > 0) {
-            guiGraphics.fill(i + 200, j + 20 + 60 - scaledFluid, i + 208, j + 80, 0xFF0000FF);
+            guiGraphics.fill(i + GUISettings.FLUID_BAR_X, j + GUISettings.FLUID_BAR_Y + GUISettings.FLUID_BAR_H - scaledFluid, i + GUISettings.FLUID_BAR_X + 8, j + GUISettings.FLUID_BAR_Y + GUISettings.FLUID_BAR_H, 0xFF0000FF);
         }
 
         // 5x5 探索グリッド (右端)
-        int gridX = i + 225;
-        int gridY = j + 20;
-        guiGraphics.fill(gridX - 1, gridY - 1, gridX + 5 * 5, gridY + 5 * 5, 0xFF303030);
+        int gridX = i + GUISettings.GRID_X;
+        int gridY = j + GUISettings.GRID_Y;
+        int cellSize = GUISettings.GRID_CELL_SIZE;
+        guiGraphics.fill(gridX - 1, gridY - 1, gridX + 5 * cellSize, gridY + 5 * cellSize, 0xFF303030);
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 5; col++) {
                 int color = this.menu.getGridColor(row * 5 + col);
-                int x = gridX + col * 5;
-                int y = gridY + row * 5;
-                guiGraphics.fill(x, y, x + 4, y + 4, 0xFF000000 | color);
+                int x = gridX + col * cellSize;
+                int y = gridY + row * cellSize;
+                guiGraphics.fill(x, y, x + cellSize - 1, y + cellSize - 1, 0xFF000000 | color);
                 if (row == 2 && col == 2) {
-                    guiGraphics.fill(x + 1, y + 1, x + 3, y + 3, 0xFFFFFFFF);
+                    guiGraphics.fill(x + 1, y + 1, x + cellSize - 2, y + cellSize - 2, 0xFFFFFFFF);
                 }
             }
         }
+
+        // デバッグ座標表示
+        int relX = mouseX - i;
+        int relY = mouseY - j;
+        guiGraphics.drawString(this.font, "Mouse: " + relX + ", " + relY, i + 5, j + this.imageHeight - 15, 0xFFFFFF, true);
     }
 
     @Override
@@ -101,7 +106,7 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         else if (statusId >= 5) textColor = 0x007700;
 
         int x = (this.imageWidth - this.font.width(statusText)) / 2;
-        guiGraphics.drawString(this.font, statusText, x, 105, textColor, false);
+        guiGraphics.drawString(this.font, statusText, x, GUISettings.STATUS_TEXT_Y, textColor, false);
     }
 
     @Override

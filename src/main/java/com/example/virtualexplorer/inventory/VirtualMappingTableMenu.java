@@ -3,6 +3,7 @@ package com.example.virtualexplorer.inventory;
 import com.example.virtualexplorer.block.entity.VirtualMappingTableBlockEntity;
 import com.example.virtualexplorer.init.BlockInit;
 import com.example.virtualexplorer.init.MenuInit;
+import com.example.virtualexplorer.inventory.GUISettings;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -35,38 +36,39 @@ public class VirtualMappingTableMenu extends AbstractContainerMenu {
         IItemHandler inventory = blockEntity.getInventory();
         
         // 0: モジュールスロット
-        this.addSlot(new SlotItemHandler(inventory, 0, 30, 20));
-        // 1〜4: アップグレードスロット (縦に並べる)
-        this.addSlot(new SlotItemHandler(inventory, 1, 8, 20));
-        this.addSlot(new SlotItemHandler(inventory, 2, 8, 38));
-        this.addSlot(new SlotItemHandler(inventory, 3, 8, 56));
-        this.addSlot(new SlotItemHandler(inventory, 4, 8, 74));
+        this.addSlot(new SlotItemHandler(inventory, 0, GUISettings.SLOT_MODULE_X, GUISettings.SLOT_MODULE_Y));
+        // 1〜4: アップグレードスロット
+        for (int i = 0; i < 4; i++) {
+            this.addSlot(new SlotItemHandler(inventory, 1 + i, GUISettings.SLOT_UPGRADE_X, GUISettings.SLOT_UPGRADE_Y + i * GUISettings.SLOT_UPGRADE_SPACING));
+        }
         // 5: 地図スロット
-        this.addSlot(new SlotItemHandler(inventory, 5, 30, 38));
-        
+        this.addSlot(new SlotItemHandler(inventory, 5, GUISettings.SLOT_MAP_X, GUISettings.SLOT_MAP_Y));
         // 14: フィルタースロット
-        this.addSlot(new SlotItemHandler(inventory, 14, 30, 56));
+        this.addSlot(new SlotItemHandler(inventory, 14, GUISettings.SLOT_FILTER_X, GUISettings.SLOT_FILTER_Y));
         
         // 6〜13: 出力スロット (4x2)
         for (int row = 0; row < 2; row++) {
             for (int col = 0; col < 4; col++) {
-                this.addSlot(new SlotItemHandler(inventory, 6 + col + row * 4, 100 + col * 18, 20 + row * 18));
+                this.addSlot(new SlotItemHandler(inventory, 6 + col + row * 4, 
+                    GUISettings.SLOT_OUTPUT_X + col * GUISettings.SLOT_OUTPUT_SPACING, 
+                    GUISettings.SLOT_OUTPUT_Y + row * GUISettings.SLOT_OUTPUT_SPACING));
             }
         }
         
-        int playerInvX = 47; // (256 - 162) / 2
-        int playerInvY = 120; // 104から120に下げて重なりを防止
-
         // プレイヤーインベントリ
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, playerInvX + col * 18, playerInvY + row * 18));
+                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 
+                    GUISettings.PLAYER_INV_X + col * 18, 
+                    GUISettings.PLAYER_INV_Y + row * 18));
             }
         }
 
         // ホットバー
         for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(playerInventory, col, playerInvX + col * 18, playerInvY + 58));
+            this.addSlot(new Slot(playerInventory, col, 
+                GUISettings.PLAYER_INV_X + col * 18, 
+                GUISettings.PLAYER_INV_Y + 58));
         }
     }
 
