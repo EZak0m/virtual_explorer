@@ -12,7 +12,7 @@ public class GUISettings {
     // --- スロット座標 (左上 i, j からの相対座標) ---
     public static final int SLOT_UPGRADE_X = 30;
     public static final int SLOT_UPGRADE_Y = 55;
-    public static final int SLOT_UPGRADE_SPACING = 18;
+    public static final int SLOT_UPGRADE_SPACING = 20;
 
     public static final int SLOT_MODULE_X = 40;
     public static final int SLOT_MODULE_Y = 25;
@@ -42,8 +42,8 @@ public class GUISettings {
 
     public static final int PROGRESS_X = 85;
     public static final int PROGRESS_Y = 75;
-    public static final int PROGRESS_W = 24; // 長さ
-    public static final int PROGRESS_H = 4; // 太さ
+    public static final int PROGRESS_W = 100; // 長さ
+    public static final int PROGRESS_H = 10; // 太さ
 
     public static final int ENERGY_BAR_X = 199;
     public static final int ENERGY_BAR_Y = 13;

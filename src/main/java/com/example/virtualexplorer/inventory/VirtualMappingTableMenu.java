@@ -84,11 +84,10 @@ public class VirtualMappingTableMenu extends AbstractContainerMenu {
         return this.data.get(10 + index);
     }
 
-    public int getScaledProgress() {
+    public int getScaledProgress(int scale) {
         int progress = this.data.get(0);
         int maxProgress = this.data.get(1);
-        int progressBarSize = 24; // 矢印の幅
-        return maxProgress != 0 && progress != 0 ? progress * progressBarSize / maxProgress : 0;
+        return maxProgress != 0 && progress != 0 ? progress * scale / maxProgress : 0;
     }
 
     public int getRawProgress() {
