@@ -242,8 +242,7 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
 
     private boolean isOutputFull() {
         for (int i = 6; i <= 13; i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
-            if (stack.isEmpty() || stack.getCount() < stack.getMaxStackSize()) return false;
+            if (inventory.getStackInSlot(i).isEmpty()) return false;
         }
         return true;
     }

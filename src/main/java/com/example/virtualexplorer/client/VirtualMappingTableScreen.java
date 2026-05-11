@@ -19,7 +19,10 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         super(menu, playerInventory, title);
         this.imageWidth = 256;
         this.imageHeight = 220;
-        this.inventoryLabelY = this.imageHeight - 114;
+        this.titleLabelX = 48;
+        this.titleLabelY = 8;
+        this.inventoryLabelX = 47;
+        this.inventoryLabelY = 110;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
             button -> {
                 this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 0);
             })
-            .bounds(i + 30, j + 80, 30, 16)
+            .bounds(i + 25, j + 85, 30, 16)
             .build();
         this.addRenderableWidget(this.toggleBtn);
     }
@@ -43,36 +46,36 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         int j = (this.height - this.imageHeight) / 2;
         guiGraphics.blit(TEXTURE, i, j, 0, 0, this.imageWidth, this.imageHeight);
         
-        // プログレスバー (矢印を模した横棒)
+        // プログレスバー (矢印)
         int scaledProgress = this.menu.getScaledProgress();
         if (scaledProgress > 0) {
-            guiGraphics.fill(i + 52, j + 40, i + 52 + scaledProgress, j + 44, 0xFF00FF00);
+            guiGraphics.fill(i + 55, j + 45, i + 55 + scaledProgress, j + 49, 0xFF00FF00);
         }
         
-        // エネルギーバー
-        int scaledEnergy = this.menu.getScaledEnergy(60); // 60px height
+        // エネルギーバー (右側)
+        int scaledEnergy = this.menu.getScaledEnergy(60);
         if (scaledEnergy > 0) {
             guiGraphics.fill(i + 180, j + 20 + 60 - scaledEnergy, i + 188, j + 80, 0xFFFF0000);
         }
 
-        // 流体バー
+        // 流体バー (右側)
         int scaledFluid = this.menu.getScaledFluid(60);
         if (scaledFluid > 0) {
-            guiGraphics.fill(i + 195, j + 20 + 60 - scaledFluid, i + 203, j + 80, 0xFF0000FF);
+            guiGraphics.fill(i + 200, j + 20 + 60 - scaledFluid, i + 208, j + 80, 0xFF0000FF);
         }
 
-        // 5x5 探索グリッド
-        int gridX = i + 215;
+        // 5x5 探索グリッド (右端)
+        int gridX = i + 225;
         int gridY = j + 20;
-        guiGraphics.fill(gridX - 2, gridY - 2, gridX + 5 * 8, gridY + 5 * 8, 0xFF404040);
+        guiGraphics.fill(gridX - 1, gridY - 1, gridX + 5 * 5, gridY + 5 * 5, 0xFF303030);
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 5; col++) {
                 int color = this.menu.getGridColor(row * 5 + col);
-                int x = gridX + col * 8;
-                int y = gridY + row * 8;
-                guiGraphics.fill(x, y, x + 7, y + 7, 0xFF000000 | color);
+                int x = gridX + col * 5;
+                int y = gridY + row * 5;
+                guiGraphics.fill(x, y, x + 4, y + 4, 0xFF000000 | color);
                 if (row == 2 && col == 2) {
-                    guiGraphics.fill(x + 2, y + 2, x + 5, y + 5, 0xFFFFFFFF);
+                    guiGraphics.fill(x + 1, y + 1, x + 3, y + 3, 0xFFFFFFFF);
                 }
             }
         }
@@ -81,7 +84,7 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, 48, this.inventoryLabelY, 4210752, false);
+        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
 
         int statusId = this.menu.getStatusId();
         Component statusText;
@@ -98,7 +101,7 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         else if (statusId >= 5) textColor = 0x007700;
 
         int x = (this.imageWidth - this.font.width(statusText)) / 2;
-        guiGraphics.drawString(this.font, statusText, x, 92, textColor, false);
+        guiGraphics.drawString(this.font, statusText, x, 105, textColor, false);
     }
 
     @Override

@@ -54,8 +54,8 @@ public class VirtualMappingTableMenu extends AbstractContainerMenu {
             }
         }
         
-        int playerInvX = 48; // (256 - 162) / 2
-        int playerInvY = 104;
+        int playerInvX = 47; // (256 - 162) / 2
+        int playerInvY = 120; // 104から120に下げて重なりを防止
 
         // プレイヤーインベントリ
         for (int row = 0; row < 3; row++) {
