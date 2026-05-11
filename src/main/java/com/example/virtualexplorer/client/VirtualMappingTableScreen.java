@@ -46,21 +46,21 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         guiGraphics.blit(TEXTURE, i, j, 0f, 0f, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         
         // プログレスバー (矢印)
-        int scaledProgress = this.menu.getScaledProgress();
+        int scaledProgress = this.menu.getScaledProgress(GUISettings.PROGRESS_W);
         if (scaledProgress > 0) {
-            guiGraphics.fill(i + GUISettings.PROGRESS_X, j + GUISettings.PROGRESS_Y, i + GUISettings.PROGRESS_X + scaledProgress, j + GUISettings.PROGRESS_Y + 4, 0xFF00FF00);
+            guiGraphics.fill(i + GUISettings.PROGRESS_X, j + GUISettings.PROGRESS_Y, i + GUISettings.PROGRESS_X + scaledProgress, j + GUISettings.PROGRESS_Y + GUISettings.PROGRESS_H, 0xFF00FF00);
         }
         
         // エネルギーバー (右側)
         int scaledEnergy = this.menu.getScaledEnergy(GUISettings.ENERGY_BAR_H);
         if (scaledEnergy > 0) {
-            guiGraphics.fill(i + GUISettings.ENERGY_BAR_X, j + GUISettings.ENERGY_BAR_Y + GUISettings.ENERGY_BAR_H - scaledEnergy, i + GUISettings.ENERGY_BAR_X + 8, j + GUISettings.ENERGY_BAR_Y + GUISettings.ENERGY_BAR_H, 0xFFFF0000);
+            guiGraphics.fill(i + GUISettings.ENERGY_BAR_X, j + GUISettings.ENERGY_BAR_Y + GUISettings.ENERGY_BAR_H - scaledEnergy, i + GUISettings.ENERGY_BAR_X + GUISettings.BAR_WIDTH, j + GUISettings.ENERGY_BAR_Y + GUISettings.ENERGY_BAR_H, 0xFFFF0000);
         }
 
         // 流体バー (右側)
         int scaledFluid = this.menu.getScaledFluid(GUISettings.FLUID_BAR_H);
         if (scaledFluid > 0) {
-            guiGraphics.fill(i + GUISettings.FLUID_BAR_X, j + GUISettings.FLUID_BAR_Y + GUISettings.FLUID_BAR_H - scaledFluid, i + GUISettings.FLUID_BAR_X + 8, j + GUISettings.FLUID_BAR_Y + GUISettings.FLUID_BAR_H, 0xFF0000FF);
+            guiGraphics.fill(i + GUISettings.FLUID_BAR_X, j + GUISettings.FLUID_BAR_Y + GUISettings.FLUID_BAR_H - scaledFluid, i + GUISettings.FLUID_BAR_X + GUISettings.BAR_WIDTH, j + GUISettings.FLUID_BAR_Y + GUISettings.FLUID_BAR_H, 0xFF0000FF);
         }
 
         // 5x5 探索グリッド (右端)
@@ -121,10 +121,12 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
         
-        if (mouseX >= i + 180 && mouseX <= i + 188 && mouseY >= j + 20 && mouseY <= j + 80) {
+        if (mouseX >= i + GUISettings.ENERGY_BAR_X && mouseX <= i + GUISettings.ENERGY_BAR_X + GUISettings.BAR_WIDTH && 
+            mouseY >= j + GUISettings.ENERGY_BAR_Y && mouseY <= j + GUISettings.ENERGY_BAR_Y + GUISettings.ENERGY_BAR_H) {
             guiGraphics.renderTooltip(this.font, Component.literal(this.menu.getEnergy() + " / " + this.menu.getMaxEnergy() + " FE"), mouseX, mouseY);
         }
-        if (mouseX >= i + 195 && mouseX <= i + 203 && mouseY >= j + 20 && mouseY <= j + 80) {
+        if (mouseX >= i + GUISettings.FLUID_BAR_X && mouseX <= i + GUISettings.FLUID_BAR_X + GUISettings.BAR_WIDTH && 
+            mouseY >= j + GUISettings.FLUID_BAR_Y && mouseY <= j + GUISettings.FLUID_BAR_Y + GUISettings.FLUID_BAR_H) {
             guiGraphics.renderTooltip(this.font, Component.literal(this.menu.getFluidAmount() + " / 10000 mB"), mouseX, mouseY);
         }
     }
