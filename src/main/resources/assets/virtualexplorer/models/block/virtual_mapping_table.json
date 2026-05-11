@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "virtualexplorer:block/virtual_mapping_table"
+  }
+}

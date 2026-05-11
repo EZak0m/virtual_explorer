@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " R ",
+    "RMR",
+    " R "
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "M": {
+      "item": "minecraft:clock"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:speed_upgrade",
+    "count": 1
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "virtualexplorer:block/virtual_mapping_table" }
+  }
+}
