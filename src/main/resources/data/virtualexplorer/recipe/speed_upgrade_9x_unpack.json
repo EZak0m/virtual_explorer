@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "virtualexplorer:speed_upgrade_9x"
+    }
+  ],
+  "result": {
+    "id": "virtualexplorer:speed_upgrade",
+    "count": 9
+  }
+}

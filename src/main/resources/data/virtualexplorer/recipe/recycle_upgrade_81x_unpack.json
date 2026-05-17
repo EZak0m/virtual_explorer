@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "virtualexplorer:recycle_upgrade_81x"
+    }
+  ],
+  "result": {
+    "id": "virtualexplorer:recycle_upgrade_9x",
+    "count": 9
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "virtualexplorer:upgrade_fluid_9x"
+    }
+  ],
+  "result": {
+    "id": "virtualexplorer:upgrade_fluid",
+    "count": 9
+  }
+}

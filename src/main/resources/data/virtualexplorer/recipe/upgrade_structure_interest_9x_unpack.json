@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "virtualexplorer:upgrade_structure_interest_9x"
+    }
+  ],
+  "result": {
+    "id": "virtualexplorer:upgrade_structure_interest",
+    "count": 9
+  }
+}

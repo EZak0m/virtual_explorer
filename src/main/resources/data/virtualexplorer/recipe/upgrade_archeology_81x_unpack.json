@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "virtualexplorer:upgrade_archeology_81x"
+    }
+  ],
+  "result": {
+    "id": "virtualexplorer:upgrade_archeology_9x",
+    "count": 9
+  }
+}

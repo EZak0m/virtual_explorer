@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "virtualexplorer:parallel_upgrade_9x"
+    }
+  ],
+  "result": {
+    "id": "virtualexplorer:parallel_upgrade",
+    "count": 9
+  }
+}
