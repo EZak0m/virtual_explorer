@@ -620,16 +620,15 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
                 if (stored > 0) {
                     int maxReceive = energyStorage.receiveEnergy(stored, true);
                     if (maxReceive > 0) {
-                        int extracted = neighborEnergy.extractEnergy(maxReceive, false);
-                        if (extracted > 0) {
-                            energyStorage.receiveEnergy(extracted, false);
-                        } else {
-                            // 通常の抽出が0の場合、リフレクションで内部の energy フィールドを直接減らして強制消去を試みる
-                            int forcedExtracted = 0;
-                            Class<?> clazz = neighborEnergy.getClass();
-                            while (clazz != null) {
+                        // 搬出元の出力制限(maxExtract)をバイパスするため、まず最優先でリフレクションにより電力を強制抽出する
+                        int forcedExtracted = 0;
+                        Class<?> clazz = neighborEnergy.getClass();
+                        String[] targetFields = {"energy", "energyStored", "fe", "power", "storedEnergy", "amount"};
+                        
+                        while (clazz != null && forcedExtracted <= 0) {
+                            for (String fieldName : targetFields) {
                                 try {
-                                    java.lang.reflect.Field energyField = clazz.getDeclaredField("energy");
+                                    java.lang.reflect.Field energyField = clazz.getDeclaredField(fieldName);
                                     energyField.setAccessible(true);
                                     int current = energyField.getInt(neighborEnergy);
                                     forcedExtracted = Math.min(maxReceive, current);
@@ -639,13 +638,21 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
                                         break;
                                     }
                                 } catch (NoSuchFieldException e) {
-                                    clazz = clazz.getSuperclass();
+                                    // 該当フィールドがない場合は次を試す
                                 } catch (Exception e) {
                                     break;
                                 }
                             }
-                            // リフレクションでも減らせない受電専用などの場合、強制的にこちら側に追加する
-                            if (forcedExtracted <= 0) {
+                            clazz = clazz.getSuperclass();
+                        }
+                        
+                        // もしリフレクションで抽出できなかった場合のみ、通常の extractEnergy でフォールバック受電する
+                        if (forcedExtracted <= 0) {
+                            int extracted = neighborEnergy.extractEnergy(maxReceive, false);
+                            if (extracted > 0) {
+                                energyStorage.receiveEnergy(extracted, false);
+                            } else {
+                                // 通常抽出もできず、リフレクションも機能しない場合のクリエイティブ蓄電池などへの最終フォールバック受電
                                 energyStorage.receiveEnergy(maxReceive, false);
                             }
                         }
