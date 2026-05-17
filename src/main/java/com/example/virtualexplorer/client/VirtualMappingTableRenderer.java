@@ -103,56 +103,58 @@ public class VirtualMappingTableRenderer implements BlockEntityRenderer<VirtualM
 
     /**
      * 指定された座標に半透明の平面を描画します。自発光（LightmapMax）を強制します。
+     * 頂点フォーマット（DefaultVertexFormat.BLOCK）に準拠するため、UV0 と Normal も正しく指定します。
      */
     private void drawPlane(VertexConsumer consumer, Matrix4f matrix, float x1, float z1, float x2, float z2, float y, int r, int g, int b, int a) {
         int fullLight = 15728880; // 明るさの最大値 (暗闇でも光って見える)
-        consumer.addVertex(matrix, x1, y, z1).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, x1, y, z2).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, x2, y, z2).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, x2, y, z1).setColor(r, g, b, a).setLight(fullLight);
+        consumer.addVertex(matrix, x1, y, z1).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(matrix, x1, y, z2).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(matrix, x2, y, z2).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(matrix, x2, y, z1).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 1.0f, 0.0f);
     }
 
     /**
      * コアとなる半透明のキューブ（6面）を描画します。自発光します。
+     * 各面に対応した適切な法線（Normal）とダミーのテクスチャUV（UV0）を指定してクラッシュを解消します。
      */
     private void drawCube(VertexConsumer consumer, Matrix4f matrix, int r, int g, int b, int a) {
         float size = 0.5f;
         int fullLight = 15728880;
 
-        // 上面 (Top)
-        consumer.addVertex(matrix, -size, size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, -size, size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, size, -size).setColor(r, g, b, a).setLight(fullLight);
+        // 上面 (Top) - 法線: (0, 1, 0)
+        consumer.addVertex(matrix, -size, size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(matrix, -size, size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(matrix, size, size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 1.0f, 0.0f);
+        consumer.addVertex(matrix, size, size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 1.0f, 0.0f);
         
-        // 底面 (Bottom)
-        consumer.addVertex(matrix, -size, -size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, -size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, -size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, -size, -size, size).setColor(r, g, b, a).setLight(fullLight);
+        // 底面 (Bottom) - 法線: (0, -1, 0)
+        consumer.addVertex(matrix, -size, -size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, -1.0f, 0.0f);
+        consumer.addVertex(matrix, size, -size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, -1.0f, 0.0f);
+        consumer.addVertex(matrix, size, -size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, -1.0f, 0.0f);
+        consumer.addVertex(matrix, -size, -size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, -1.0f, 0.0f);
         
-        // 前面 (Front)
-        consumer.addVertex(matrix, -size, -size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, -size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, -size, size, size).setColor(r, g, b, a).setLight(fullLight);
+        // 前面 (Front) - 法線: (0, 0, 1)
+        consumer.addVertex(matrix, -size, -size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 0.0f, 1.0f);
+        consumer.addVertex(matrix, size, -size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 0.0f, 1.0f);
+        consumer.addVertex(matrix, size, size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 0.0f, 1.0f);
+        consumer.addVertex(matrix, -size, size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 0.0f, 1.0f);
         
-        // 後面 (Back)
-        consumer.addVertex(matrix, -size, -size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, -size, size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, -size, -size).setColor(r, g, b, a).setLight(fullLight);
+        // 後面 (Back) - 法線: (0, 0, -1)
+        consumer.addVertex(matrix, -size, -size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 0.0f, -1.0f);
+        consumer.addVertex(matrix, -size, size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 0.0f, -1.0f);
+        consumer.addVertex(matrix, size, size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 0.0f, -1.0f);
+        consumer.addVertex(matrix, size, -size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(0.0f, 0.0f, -1.0f);
         
-        // 左面 (Left)
-        consumer.addVertex(matrix, -size, -size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, -size, -size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, -size, size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, -size, size, -size).setColor(r, g, b, a).setLight(fullLight);
+        // 左面 (Left) - 法線: (-1, 0, 0)
+        consumer.addVertex(matrix, -size, -size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(-1.0f, 0.0f, 0.0f);
+        consumer.addVertex(matrix, -size, -size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(-1.0f, 0.0f, 0.0f);
+        consumer.addVertex(matrix, -size, size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(-1.0f, 0.0f, 0.0f);
+        consumer.addVertex(matrix, -size, size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(-1.0f, 0.0f, 0.0f);
         
-        // 右面 (Right)
-        consumer.addVertex(matrix, size, -size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, size, -size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, size, size).setColor(r, g, b, a).setLight(fullLight);
-        consumer.addVertex(matrix, size, -size, size).setColor(r, g, b, a).setLight(fullLight);
+        // 右面 (Right) - 法線: (1, 0, 0)
+        consumer.addVertex(matrix, size, -size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(1.0f, 0.0f, 0.0f);
+        consumer.addVertex(matrix, size, size, -size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(1.0f, 0.0f, 0.0f);
+        consumer.addVertex(matrix, size, size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(1.0f, 0.0f, 0.0f);
+        consumer.addVertex(matrix, size, -size, size).setColor(r, g, b, a).setUv(0.0f, 0.0f).setLight(fullLight).setNormal(1.0f, 0.0f, 0.0f);
     }
 }
