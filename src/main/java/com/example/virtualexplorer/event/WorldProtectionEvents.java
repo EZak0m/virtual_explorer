@@ -17,7 +17,7 @@ public class WorldProtectionEvents {
     public static void onChunkLoad(ChunkEvent.Load event) {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
             StructureTrackerWSD data = StructureTrackerWSD.get(serverLevel);
-            if (data.isExplored(event.getChunk().getPos())) {
+            if (data.isAnyExplored(event.getChunk().getPos())) {
                 // 探索済みチャンク内のチェストをクリア
                 for (BlockPos pos : event.getChunk().getBlockEntitiesPos()) {
                     BlockEntity be = serverLevel.getBlockEntity(pos);

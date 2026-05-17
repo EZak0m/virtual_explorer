@@ -56,7 +56,7 @@ public class Config {
     static {
         BUILDER.push("Machine & Energy");
         MAX_FE_CAPACITY = BUILDER.comment("機械の内部FEタンク最大容量")
-                .defineInRange("max_fe_capacity", 2100000000, 1000, Integer.MAX_VALUE);
+                .defineInRange("max_fe_capacity_v2", 2100000000, 1000, Integer.MAX_VALUE);
         BASE_FE_PER_TICK = BUILDER.comment("基本稼働時の1Tickあたりの消費FE")
                 .defineInRange("base_fe_per_tick", 100, 0, Integer.MAX_VALUE);
         MAX_FE_TRANSFER_RATE = BUILDER.comment("1Tickあたりに外部から搬入できる最大FE量")
@@ -148,7 +148,13 @@ public class Config {
                     "minecraft:the_end:#ffffd1"
                 ), obj -> obj instanceof String);
         BUILDER.pop();
+        
+        BUILDER.push("Debug");
+        SHOW_DEBUG_COORDINATES = BUILDER.comment("GUI上でマウス座標を表示するか（開発者向け）")
+                .define("show_debug_coordinates", false);
+        BUILDER.pop();
     }
 
+    public static final ModConfigSpec.BooleanValue SHOW_DEBUG_COORDINATES;
     public static final ModConfigSpec SPEC = BUILDER.build();
 }

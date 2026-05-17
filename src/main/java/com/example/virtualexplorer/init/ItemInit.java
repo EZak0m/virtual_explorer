@@ -36,4 +36,27 @@ public class ItemInit {
 
     // ターゲットピン (NBT処理が必要な特殊アップグレード)
     public static final DeferredItem<com.example.virtualexplorer.item.TargetPinItem> TARGET_PIN = ITEMS.register("target_pin", () -> new com.example.virtualexplorer.item.TargetPinItem(new Item.Properties().stacksTo(1)));
+
+    // 圧縮アップグレードを一括登録するためのリスト
+    public static final java.util.List<DeferredItem<com.example.virtualexplorer.item.CompressedUpgradeItem>> COMPRESSED_UPGRADES = new java.util.ArrayList<>();
+
+    static {
+        DeferredItem<?>[] baseUpgrades = {
+            SPEED_UPGRADE, RECYCLE_UPGRADE, RADAR_UPGRADE, PARALLEL_UPGRADE,
+            UPGRADE_FLUID, UPGRADE_ARCHEOLOGY, UPGRADE_DEMOLITION_MASTER,
+            UPGRADE_STRUCTURE_INTEREST, UPGRADE_INFINITE, UPGRADE_FORTUNE, UPGRADE_SILK_TOUCH
+        };
+        int[] multipliers = {9, 81, 729};
+        
+        for (DeferredItem<?> base : baseUpgrades) {
+            for (int mult : multipliers) {
+                String name = base.getId().getPath() + "_" + mult + "x";
+                COMPRESSED_UPGRADES.add(ITEMS.register(name, () -> 
+                    new com.example.virtualexplorer.item.CompressedUpgradeItem(
+                        () -> base.get(), mult, new Item.Properties().stacksTo(64)
+                    )
+                ));
+            }
+        }
+    }
 }

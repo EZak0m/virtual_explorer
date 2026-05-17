@@ -24,11 +24,14 @@ public class GUISettings {
     public static final int SLOT_FILTER_Y = 73;
 
     public static final int SLOT_OUTPUT_X = 90;
-    public static final int SLOT_OUTPUT_Y = 28;
+    public static final int SLOT_OUTPUT_Y = 15;
     public static final int SLOT_OUTPUT_SPACING = 18;
 
     public static final int PLAYER_INV_X = 47;
     public static final int PLAYER_INV_Y = 120;
+
+    // --- その他 ---
+    public static final int GRID_SIZE = 5;
 
     // --- 描画物座標 ---
     public static final int TITLE_X = 40;

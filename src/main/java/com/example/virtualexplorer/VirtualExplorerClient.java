@@ -33,4 +33,12 @@ public class VirtualExplorerClient {
     public static void onRegisterMenuScreens(net.neoforged.neoforge.client.event.RegisterMenuScreensEvent event) {
         event.register(com.example.virtualexplorer.init.MenuInit.VIRTUAL_MAPPING_TABLE_MENU.get(), com.example.virtualexplorer.client.VirtualMappingTableScreen::new);
     }
+
+    @SubscribeEvent
+    public static void onRegisterRenderers(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(
+            com.example.virtualexplorer.init.BlockEntityInit.VIRTUAL_MAPPING_TABLE_BE.get(),
+            com.example.virtualexplorer.client.VirtualMappingTableRenderer::new
+        );
+    }
 }

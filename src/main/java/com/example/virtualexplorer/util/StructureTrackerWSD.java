@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class StructureTrackerWSD extends SavedData {
     private static final String DATA_NAME = "virtual_explorer_structures";
-    private final Set<Long> exploredChunks = new HashSet<>();
+    private final java.util.Map<String, Set<Long>> exploredChunksPerType = new java.util.HashMap<>();
 
     public static StructureTrackerWSD get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(new Factory<>(
@@ -23,27 +23,43 @@ public class StructureTrackerWSD extends SavedData {
         ), DATA_NAME);
     }
 
-    public void markExplored(ChunkPos pos) {
-        exploredChunks.add(pos.toLong());
+    public void markExplored(String type, ChunkPos pos) {
+        exploredChunksPerType.computeIfAbsent(type, k -> new HashSet<>()).add(pos.toLong());
         setDirty();
     }
 
-    public boolean isExplored(ChunkPos pos) {
-        return exploredChunks.contains(pos.toLong());
+    public boolean isExplored(String type, ChunkPos pos) {
+        Set<Long> explored = exploredChunksPerType.get(type);
+        return explored != null && explored.contains(pos.toLong());
+    }
+
+    public boolean isAnyExplored(ChunkPos pos) {
+        long l = pos.toLong();
+        for (Set<Long> set : exploredChunksPerType.values()) {
+            if (set.contains(l)) return true;
+        }
+        return false;
     }
 
     private static StructureTrackerWSD load(CompoundTag tag, HolderLookup.Provider registries) {
         StructureTrackerWSD data = new StructureTrackerWSD();
-        long[] array = tag.getLongArray("ExploredChunks");
-        for (long l : array) {
-            data.exploredChunks.add(l);
+        CompoundTag typesTag = tag.getCompound("Types");
+        for (String type : typesTag.getAllKeys()) {
+            long[] array = typesTag.getLongArray(type);
+            Set<Long> set = new HashSet<>();
+            for (long l : array) set.add(l);
+            data.exploredChunksPerType.put(type, set);
         }
         return data;
     }
 
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putLongArray("ExploredChunks", exploredChunks.stream().mapToLong(Long::longValue).toArray());
+        CompoundTag typesTag = new CompoundTag();
+        for (java.util.Map.Entry<String, Set<Long>> entry : exploredChunksPerType.entrySet()) {
+            typesTag.putLongArray(entry.getKey(), entry.getValue().stream().mapToLong(Long::longValue).toArray());
+        }
+        tag.put("Types", typesTag);
         return tag;
     }
 }

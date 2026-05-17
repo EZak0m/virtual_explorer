@@ -155,6 +155,10 @@ public class LootGenerator {
         if (structureId.contains("pyramid")) return ResourceLocation.fromNamespaceAndPath("minecraft", "chests/desert_pyramid");
         if (structureId.contains("bastion")) return ResourceLocation.fromNamespaceAndPath("minecraft", "chests/bastion_treasure");
         if (structureId.contains("stronghold")) return ResourceLocation.fromNamespaceAndPath("minecraft", "chests/stronghold_corridor");
+        if (structureId.contains("mansion")) return ResourceLocation.fromNamespaceAndPath("minecraft", "chests/woodland_mansion");
+        if (structureId.contains("monument")) return ResourceLocation.fromNamespaceAndPath("minecraft", "chests/underwater_ruin_big");
+        if (structureId.contains("buried_treasure")) return ResourceLocation.fromNamespaceAndPath("minecraft", "chests/buried_treasure");
+        if (structureId.contains("trial_chambers")) return ResourceLocation.fromNamespaceAndPath("minecraft", "chests/trial_chambers/reward");
         return null;
     }
 

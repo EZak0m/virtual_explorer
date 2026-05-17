@@ -62,7 +62,7 @@ public class VirtualExplorer {
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        LOGGER.info("Virtual Explorer Mod server starting.");
+    public void onRegisterCommands(net.neoforged.neoforge.event.RegisterCommandsEvent event) {
+        com.example.virtualexplorer.command.VirtualExplorerCommand.register(event.getDispatcher());
     }
 }

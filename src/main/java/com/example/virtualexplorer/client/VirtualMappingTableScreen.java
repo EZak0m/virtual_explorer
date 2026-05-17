@@ -35,8 +35,21 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
                 this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 0);
             })
             .bounds(i + GUISettings.TOGGLE_BTN_X, j + GUISettings.TOGGLE_BTN_Y, 30, 16)
+            .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("tooltip.virtualexplorer.toggle_btn")))
             .build();
         this.addRenderableWidget(this.toggleBtn);
+
+        net.minecraft.client.gui.components.Button settingsBtn = net.minecraft.client.gui.components.Button.builder(
+            Component.literal("⚙"), 
+            button -> {
+                if (this.menu.getBlockEntity() != null) {
+                    this.minecraft.setScreen(new com.example.virtualexplorer.client.UpgradeSettingsScreen(this, this.menu.getBlockEntity()));
+                }
+            })
+            .bounds(i + GUISettings.WIDTH - 20, j + 5, 15, 15)
+            .tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("tooltip.virtualexplorer.settings_btn")))
+            .build();
+        this.addRenderableWidget(settingsBtn);
     }
 
     @Override
@@ -80,8 +93,9 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
             }
         }
 
-        // デバッグ座標表示
-        if (GUISettings.SHOW_DEBUG_COORDINATES) {
+        // デバッグ用マウス座標表示 (Configで切り替え)
+        if (com.example.virtualexplorer.Config.SHOW_DEBUG_COORDINATES.get()) {
+            guiGraphics.drawString(this.font, "X: " + mouseX + ", Y: " + mouseY, 5, 5, 0xFFFFFF);
             int relX = mouseX - i;
             int relY = mouseY - j;
             guiGraphics.drawString(this.font, "Mouse: " + relX + ", " + relY, i + 5, j + this.imageHeight - 15, 0xFFFFFF, true);
@@ -96,9 +110,9 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         int statusId = this.menu.getStatusId();
         Component statusText;
         if (statusId == 7) {
-            int structureId = this.menu.getTargetStructureId();
-            Component structureName = Component.translatable("structure.virtualexplorer." + structureId);
-            statusText = Component.translatable("gui.virtualexplorer.status.7", structureName);
+            String name = this.menu.getBlockEntity() != null ? this.menu.getBlockEntity().getTargetStructureName() : "";
+            if (name == null || name.isEmpty()) name = "Structure";
+            statusText = Component.translatable("gui.virtualexplorer.status.7", Component.literal(name));
         } else {
             statusText = Component.translatable("gui.virtualexplorer.status." + statusId);
         }
@@ -109,6 +123,12 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
 
         int x = (this.imageWidth - this.font.width(statusText)) / 2;
         guiGraphics.drawString(this.font, statusText, x, GUISettings.STATUS_TEXT_Y, textColor, false);
+
+        // 消費電力の表示
+        int energyCost = this.menu.getEnergyCost();
+        Component energyText = Component.literal(energyCost + " FE/tick");
+        int ex = (this.imageWidth - this.font.width(energyText)) / 2;
+        guiGraphics.drawString(this.font, energyText, ex, GUISettings.STATUS_TEXT_Y + 12, 0x404040, false);
     }
 
     @Override
@@ -141,6 +161,76 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
         if (mouseX >= i + GUISettings.FLUID_BAR_X && mouseX <= i + GUISettings.FLUID_BAR_X + GUISettings.BAR_WIDTH && 
             mouseY >= j + GUISettings.FLUID_BAR_Y && mouseY <= j + GUISettings.FLUID_BAR_Y + GUISettings.FLUID_BAR_H) {
             guiGraphics.renderTooltip(this.font, Component.literal(this.menu.getFluidAmount() + " / 10000 mB"), mouseX, mouseY);
+        }
+
+        // グリッド ツールチップ
+        int gridX = i + GUISettings.GRID_X;
+        int gridY = j + GUISettings.GRID_Y;
+        int cellSize = GUISettings.GRID_CELL_SIZE;
+        if (mouseX >= gridX && mouseX < gridX + 5 * cellSize &&
+            mouseY >= gridY && mouseY < gridY + 5 * cellSize) {
+            int col = (mouseX - gridX) / cellSize;
+            int row = (mouseY - gridY) / cellSize;
+            int chunkX = this.menu.getCurrentChunkX() + (col - 2);
+            int chunkZ = this.menu.getCurrentChunkZ() + (row - 2);
+            int blockX = chunkX * 16;
+            int blockZ = chunkZ * 16;
+
+            // クライアント側ワールドからバイオーム情報を取得
+            net.minecraft.world.level.Level level = net.minecraft.client.Minecraft.getInstance().level;
+            Component biomeComponent = null;
+            if (level != null) {
+                net.minecraft.core.BlockPos pos = new net.minecraft.core.BlockPos(blockX, 64, blockZ);
+                net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> biomeHolder = level.getBiome(pos);
+                net.minecraft.resources.ResourceLocation biomeKey = biomeHolder.unwrapKey().map(net.minecraft.resources.ResourceKey::location).orElse(null);
+                if (biomeKey != null) {
+                    String biomeName = biomeKey.toString();
+                    String descriptionId = net.minecraft.Util.makeDescriptionId("biome", biomeKey);
+                    Component baseBiomeComp = Component.translatable(descriptionId);
+
+                    net.minecraft.network.chat.TextColor color = null;
+                    java.util.List<? extends String> colors = com.example.virtualexplorer.Config.BIOME_COLORS.get();
+                    for (String entry : colors) {
+                        String[] split = entry.split(":", 2);
+                        if (split.length == 2) {
+                            String key = split[0];
+                            String colorVal = split[1];
+                            if (!key.contains(":")) {
+                                key = "minecraft:" + key;
+                            }
+                            String targetKey = biomeName;
+                            if (!targetKey.contains(":")) {
+                                targetKey = "minecraft:" + targetKey;
+                            }
+                            if (key.equalsIgnoreCase(targetKey)) {
+                                try {
+                                    String hex = colorVal.replace("#", "").trim();
+                                    int rgb = Integer.parseInt(hex, 16);
+                                    color = net.minecraft.network.chat.TextColor.fromRgb(rgb);
+                                } catch (NumberFormatException e) {
+                                    // パースエラーは無視
+                                }
+                            }
+                        }
+                    }
+
+                    if (color != null) {
+                        final net.minecraft.network.chat.TextColor finalColor = color;
+                        biomeComponent = Component.literal("Biome: ").append(baseBiomeComp.copy().withStyle(style -> style.withColor(finalColor)));
+                    } else {
+                        biomeComponent = Component.literal("Biome: ").append(baseBiomeComp.copy().withStyle(net.minecraft.ChatFormatting.GRAY));
+                    }
+                }
+            }
+
+            java.util.List<Component> tooltipComponents = new java.util.ArrayList<>();
+            tooltipComponents.add(Component.literal("Chunk: (" + chunkX + ", " + chunkZ + ")"));
+            tooltipComponents.add(Component.literal("Block: (" + blockX + ", " + blockZ + ")"));
+            if (biomeComponent != null) {
+                tooltipComponents.add(biomeComponent);
+            }
+
+            guiGraphics.renderComponentTooltip(this.font, tooltipComponents, mouseX, mouseY);
         }
     }
 

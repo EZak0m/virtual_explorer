@@ -22,36 +22,46 @@ public class VirtualMappingTableMenu extends AbstractContainerMenu {
     private final net.minecraft.world.inventory.ContainerData data;
 
     public VirtualMappingTableMenu(int windowId, Inventory playerInventory, net.minecraft.network.RegistryFriendlyByteBuf buf) {
-        this(windowId, playerInventory, playerInventory.player.level().getBlockEntity(buf.readBlockPos()), new net.minecraft.world.inventory.SimpleContainerData(37));
+        this(windowId, playerInventory, playerInventory.player.level().getBlockEntity(buf.readBlockPos()), new net.minecraft.world.inventory.SimpleContainerData(42));
     }
 
     public VirtualMappingTableMenu(int windowId, Inventory playerInventory, BlockEntity entity, net.minecraft.world.inventory.ContainerData data) {
         super(MenuInit.VIRTUAL_MAPPING_TABLE_MENU.get(), windowId);
         this.blockEntity = (VirtualMappingTableBlockEntity) entity;
-        this.levelAccess = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
+        this.levelAccess = (this.blockEntity != null) ? ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()) : ContainerLevelAccess.NULL;
         this.data = data;
         
         this.addDataSlots(data); // ここで登録
 
-        IItemHandler inventory = blockEntity.getInventory();
+        IItemHandler inventory = (this.blockEntity != null) ? blockEntity.getInventory() : new net.neoforged.neoforge.items.ItemStackHandler(31);
         
         // 0: モジュールスロット
         this.addSlot(new SlotItemHandler(inventory, 0, GUISettings.SLOT_MODULE_X, GUISettings.SLOT_MODULE_Y));
-        // 1〜4: アップグレードスロット
-        for (int i = 0; i < 4; i++) {
-            this.addSlot(new SlotItemHandler(inventory, 1 + i, GUISettings.SLOT_UPGRADE_X, GUISettings.SLOT_UPGRADE_Y + i * GUISettings.SLOT_UPGRADE_SPACING));
-        }
-        // 5: 地図スロット
-        this.addSlot(new SlotItemHandler(inventory, 5, GUISettings.SLOT_MAP_X, GUISettings.SLOT_MAP_Y));
-        // 14: フィルタースロット
-        this.addSlot(new SlotItemHandler(inventory, 14, GUISettings.SLOT_FILTER_X, GUISettings.SLOT_FILTER_Y));
+        // 1: インストール用スロット
+        this.addSlot(new SlotItemHandler(inventory, 1, GUISettings.SLOT_UPGRADE_X, GUISettings.SLOT_UPGRADE_Y) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                if (blockEntity == null) return super.mayPlace(stack);
+                // addUpgradeをシミュレートして配置可能か判定
+                return blockEntity.canAddUpgrade(stack.getItem(), stack.getCount());
+            }
+        });
+        // 2: 地図スロット
+        this.addSlot(new SlotItemHandler(inventory, 2, GUISettings.SLOT_MAP_X, GUISettings.SLOT_MAP_Y));
+        // 3: フィルタースロット
+        this.addSlot(new SlotItemHandler(inventory, 3, GUISettings.SLOT_FILTER_X, GUISettings.SLOT_FILTER_Y));
         
-        // 6〜13: 出力スロット (4x2)
-        for (int row = 0; row < 2; row++) {
+        // 4〜19: 出力スロット (4x4)
+        for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
-                this.addSlot(new SlotItemHandler(inventory, 6 + col + row * 4, 
+                this.addSlot(new SlotItemHandler(inventory, 4 + col + row * 4, 
                     GUISettings.SLOT_OUTPUT_X + col * GUISettings.SLOT_OUTPUT_SPACING, 
-                    GUISettings.SLOT_OUTPUT_Y + row * GUISettings.SLOT_OUTPUT_SPACING));
+                    GUISettings.SLOT_OUTPUT_Y + row * GUISettings.SLOT_OUTPUT_SPACING) {
+                    @Override
+                    public boolean mayPlace(ItemStack stack) {
+                        return false; // 手動搬入を禁止
+                    }
+                });
             }
         }
         
@@ -98,6 +108,14 @@ public class VirtualMappingTableMenu extends AbstractContainerMenu {
         return this.data.get(1);
     }
 
+    public int getCurrentChunkX() {
+        return (this.data.get(37) & 0xFFFF) | (this.data.get(38) << 16);
+    }
+
+    public int getCurrentChunkZ() {
+        return (this.data.get(39) & 0xFFFF) | (this.data.get(40) << 16);
+    }
+
     public int getEnergy() {
         return (this.data.get(3) << 16) | (this.data.get(2) & 0xFFFF);
     }
@@ -126,6 +144,10 @@ public class VirtualMappingTableMenu extends AbstractContainerMenu {
         return maxAmount != 0 && amount != 0 ? (int)((long)amount * height / maxAmount) : 0;
     }
 
+    public int getEnergyCost() {
+        return this.data.get(41);
+    }
+
     private void addPlayerInventory(IItemHandler playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
@@ -140,6 +162,10 @@ public class VirtualMappingTableMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(levelAccess, player, BlockInit.VIRTUAL_MAPPING_TABLE.get());
+    }
+
+    public VirtualMappingTableBlockEntity getBlockEntity() {
+        return blockEntity;
     }
 
     public boolean isActive() {
@@ -162,11 +188,13 @@ public class VirtualMappingTableMenu extends AbstractContainerMenu {
         if (slot != null && slot.hasItem()) {
             ItemStack stack = slot.getItem();
             itemstack = stack.copy();
-            if (index < 15) { // BlockEntity -> Player
-                if (!this.moveItemStackTo(stack, 15, this.slots.size(), true)) {
+            if (index < 20) { // BlockEntity -> Player (Module, Install, Map, Filter, Outputs)
+                if (!this.moveItemStackTo(stack, 20, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(stack, 0, 15, false)) { // Player -> BlockEntity
+            } else if (!this.moveItemStackTo(stack, 0, 4, false)) { // Player -> BlockEntity (Special slots only)
+                // Note: Slots 4-19 (Outputs) are skipped because we don't want to move player items into output slots manually via shift-click usually, 
+                // but the moveItemStackTo range [0, 4) only covers special slots.
                 return ItemStack.EMPTY;
             }
 

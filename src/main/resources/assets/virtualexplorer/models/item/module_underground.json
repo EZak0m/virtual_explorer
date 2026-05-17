@@ -1,6 +1,1 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "virtualexplorer:item/module_underground"
-  }
-}
+{"parent": "item/generated", "textures": { "layer0": "virtualexplorer:item/module_underground" } }

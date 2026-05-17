@@ -46,7 +46,9 @@ displayName="${mod_name}" #mandatory
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Example mod description.
+Virtual Explorerは、広大なワールドを効率的に探索するための高度な機械を追加するModです。
+エネルギー（FE）と地図を消費して、周囲のバイオームや構造物をスキャンし、地下の資源やチェストの中身を仮想的に収集します。
+多様なアップグレードにより、速度の向上や特定アイテムの抽出、さらには構造物への自動追従など、プレイスタイルに合わせたカスタマイズが可能です。
 '''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
