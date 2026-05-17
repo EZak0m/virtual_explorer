@@ -176,51 +176,50 @@ public class VirtualMappingTableScreen extends AbstractContainerScreen<VirtualMa
             int blockX = chunkX * 16;
             int blockZ = chunkZ * 16;
 
-            // クライアント側ワールドからバイオーム情報を取得
-            net.minecraft.world.level.Level level = net.minecraft.client.Minecraft.getInstance().level;
+            // BlockEntityから直接バイオーム文字列を取得
+            String biomeName = "minecraft:plains";
+            com.example.virtualexplorer.block.entity.VirtualMappingTableBlockEntity be = this.menu.getBlockEntity();
+            if (be != null) {
+                int biomeIndex = row * 5 + col;
+                biomeName = be.getGridBiome(biomeIndex);
+            }
             Component biomeComponent = null;
-            if (level != null) {
-                net.minecraft.core.BlockPos pos = new net.minecraft.core.BlockPos(blockX, 64, blockZ);
-                net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> biomeHolder = level.getBiome(pos);
-                net.minecraft.resources.ResourceLocation biomeKey = biomeHolder.unwrapKey().map(net.minecraft.resources.ResourceKey::location).orElse(null);
-                if (biomeKey != null) {
-                    String biomeName = biomeKey.toString();
-                    String descriptionId = net.minecraft.Util.makeDescriptionId("biome", biomeKey);
-                    Component baseBiomeComp = Component.translatable(descriptionId);
 
-                    net.minecraft.network.chat.TextColor color = null;
-                    java.util.List<? extends String> colors = com.example.virtualexplorer.Config.BIOME_COLORS.get();
-                    for (String entry : colors) {
-                        String[] split = entry.split(":", 2);
-                        if (split.length == 2) {
-                            String key = split[0];
-                            String colorVal = split[1];
-                            if (!key.contains(":")) {
-                                key = "minecraft:" + key;
-                            }
-                            String targetKey = biomeName;
-                            if (!targetKey.contains(":")) {
-                                targetKey = "minecraft:" + targetKey;
-                            }
-                            if (key.equalsIgnoreCase(targetKey)) {
-                                try {
-                                    String hex = colorVal.replace("#", "").trim();
-                                    int rgb = Integer.parseInt(hex, 16);
-                                    color = net.minecraft.network.chat.TextColor.fromRgb(rgb);
-                                } catch (NumberFormatException e) {
-                                    // パースエラーは無視
-                                }
-                            }
+            net.minecraft.resources.ResourceLocation biomeKey = net.minecraft.resources.ResourceLocation.parse(biomeName);
+            String descriptionId = net.minecraft.Util.makeDescriptionId("biome", biomeKey);
+            Component baseBiomeComp = Component.translatable(descriptionId);
+
+            net.minecraft.network.chat.TextColor color = null;
+            java.util.List<? extends String> colors = com.example.virtualexplorer.Config.BIOME_COLORS.get();
+            for (String entry : colors) {
+                String[] split = entry.split(":", 2);
+                if (split.length == 2) {
+                    String key = split[0];
+                    String colorVal = split[1];
+                    if (!key.contains(":")) {
+                        key = "minecraft:" + key;
+                    }
+                    String targetKey = biomeName;
+                    if (!targetKey.contains(":")) {
+                        targetKey = "minecraft:" + targetKey;
+                    }
+                    if (key.equalsIgnoreCase(targetKey)) {
+                        try {
+                            String hex = colorVal.replace("#", "").trim();
+                            int rgb = Integer.parseInt(hex, 16);
+                            color = net.minecraft.network.chat.TextColor.fromRgb(rgb);
+                        } catch (NumberFormatException e) {
+                            // パースエラーは無視
                         }
                     }
-
-                    if (color != null) {
-                        final net.minecraft.network.chat.TextColor finalColor = color;
-                        biomeComponent = Component.literal("Biome: ").append(baseBiomeComp.copy().withStyle(style -> style.withColor(finalColor)));
-                    } else {
-                        biomeComponent = Component.literal("Biome: ").append(baseBiomeComp.copy().withStyle(net.minecraft.ChatFormatting.GRAY));
-                    }
                 }
+            }
+
+            if (color != null) {
+                final net.minecraft.network.chat.TextColor finalColor = color;
+                biomeComponent = Component.literal("Biome: ").append(baseBiomeComp.copy().withStyle(style -> style.withColor(finalColor)));
+            } else {
+                biomeComponent = Component.literal("Biome: ").append(baseBiomeComp.copy().withStyle(net.minecraft.ChatFormatting.GRAY));
             }
 
             java.util.List<Component> tooltipComponents = new java.util.ArrayList<>();

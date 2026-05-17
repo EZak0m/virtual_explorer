@@ -67,6 +67,48 @@ public class VirtualMappingTableRenderer implements BlockEntityRenderer<VirtualM
             drawHologramLine(vertexConsumer, matrix, coord, -halfSize, coord, halfSize, r, g, b, a);
         }
 
+        // 1.5. 各セルに対応する半透明のカラー平面（スキャン進行状況）を描画
+        float margin = 0.006f; // セル同士の隙間
+        float halfCellSize = (step / 2.0f) - margin;
+        
+        for (int row = 0; row < gridCount; row++) {
+            for (int col = 0; col < gridCount; col++) {
+                int index = row * 5 + col;
+                int color = blockEntity.getGridColor(index);
+                
+                int cr, cg, cb, ca;
+                if (index == 12) {
+                    // 中心セル（現在位置）は白く強調発光
+                    cr = 255;
+                    cg = 255;
+                    cb = 255;
+                    ca = 140;
+                } else if (color == 0) {
+                    // 未スキャン領域は非常に薄いグレー
+                    cr = 50;
+                    cg = 50;
+                    cb = 50;
+                    ca = 25;
+                } else {
+                    // バイオームカラーを展開
+                    cr = (color >> 16) & 0xFF;
+                    cg = (color >> 8) & 0xFF;
+                    cb = color & 0xFF;
+                    ca = 90;
+                }
+                
+                // 全体的な呼吸明滅効果を適用
+                ca = (int) (ca * (0.8f + (float) Math.sin(time * 2.5f) * 0.2f));
+                
+                // セルの中心座標を算出
+                float cellX = -halfSize + col * step + step / 2.0f;
+                float cellZ = -halfSize + row * step + step / 2.0f;
+                
+                // 平面を描画 (少し高さを変えて重なりを防ぐ)
+                drawPlane(vertexConsumer, matrix, cellX - halfCellSize, cellZ - halfCellSize, cellX + halfCellSize, cellZ + halfCellSize, 0.001f, cr, cg, cb, ca);
+            }
+        }
+
         // 2. 現在探索中の中心コア（逆回転・傾きのあるキューブ）を描画
         poseStack.pushPose();
         poseStack.scale(0.12f, 0.12f, 0.12f);

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UUU",
+    "UUU",
+    "UUU"
+  ],
+  "key": {
+    "U": {
+      "item": "virtualexplorer:recycle_upgrade_9x"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:recycle_upgrade_81x",
+    "count": 1
+  }
+}

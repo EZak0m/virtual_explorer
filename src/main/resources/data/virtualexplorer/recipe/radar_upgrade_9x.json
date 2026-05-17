@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UUU",
+    "UUU",
+    "UUU"
+  ],
+  "key": {
+    "U": {
+      "item": "virtualexplorer:radar_upgrade"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:radar_upgrade_9x",
+    "count": 1
+  }
+}

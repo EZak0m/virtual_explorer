@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UUU",
+    "UUU",
+    "UUU"
+  ],
+  "key": {
+    "U": {
+      "item": "virtualexplorer:upgrade_archeology"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:upgrade_archeology_9x",
+    "count": 1
+  }
+}

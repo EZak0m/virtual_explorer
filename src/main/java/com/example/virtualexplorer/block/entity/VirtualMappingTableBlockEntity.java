@@ -92,7 +92,10 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
             if (slot == 3) {
                 return stack.getItem() instanceof com.example.virtualexplorer.item.TargetPinItem;
             }
-            return false; // 出力スロット(4-19)への手動搬入は禁止
+            if (slot >= 4 && slot <= 19) {
+                return true; // 出力スロットへの内部的な搬入は許可 (手動搬入はMenu側で禁止)
+            }
+            return false;
         }
 
         @Override
@@ -175,7 +178,21 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
     private int currentChunkX;
     private int currentChunkZ;
     private int[] gridColors = new int[25];
-    
+    private final String[] gridBiomes = new String[25];
+
+    public int getGridColor(int index) {
+        if (index >= 0 && index < 25) {
+            return gridColors[index];
+        }
+        return 0;
+    }
+
+    public String getGridBiome(int index) {
+        if (index >= 0 && index < 25) {
+            return gridBiomes[index] != null ? gridBiomes[index] : "minecraft:plains";
+        }
+        return "minecraft:plains";
+    }
     private int currentEnergyCost = 0;
     
     protected final ContainerData dataAccess = new ContainerData() {
@@ -270,9 +287,12 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
             for (int dx = -2; dx <= 2; dx++) {
                 int cx = currentChunkX + dx;
                 int cz = currentChunkZ + dz;
-                String biomeId = level.getBiome(new BlockPos(cx << 4, 64, cz << 4)).unwrapKey()
+                net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> biomeHolder = level.getBiome(new BlockPos(cx << 4, 64, cz << 4));
+                String biomeId = biomeHolder.unwrapKey()
                     .map(key -> key.location().toString()).orElse("minecraft:plains");
-                gridColors[(dz + 2) * 5 + (dx + 2)] = colorMap.getOrDefault(biomeId, 0x808080);
+                int index = (dz + 2) * 5 + (dx + 2);
+                gridColors[index] = colorMap.getOrDefault(biomeId, 0x808080);
+                gridBiomes[index] = biomeId;
             }
         }
     }
@@ -852,6 +872,11 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
         tag.putInt("ChunkX", currentChunkX);
         tag.putInt("ChunkZ", currentChunkZ);
         tag.putIntArray("GridColors", gridColors);
+        net.minecraft.nbt.ListTag biomeList = new net.minecraft.nbt.ListTag();
+        for (String b : gridBiomes) {
+            biomeList.add(net.minecraft.nbt.StringTag.valueOf(b == null ? "minecraft:plains" : b));
+        }
+        tag.put("GridBiomes", biomeList);
         
         tag.putInt("ExplorationState", state.ordinal());
         tag.putInt("HoverCount", hoverCount);
@@ -939,6 +964,12 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
         if (tag.contains("GridColors")) {
             gridColors = tag.getIntArray("GridColors");
         }
+        if (tag.contains("GridBiomes", 9)) {
+            net.minecraft.nbt.ListTag biomeList = tag.getList("GridBiomes", 8);
+            for (int i = 0; i < Math.min(biomeList.size(), gridBiomes.length); i++) {
+                gridBiomes[i] = biomeList.getString(i);
+            }
+        }
 
         if (tag.contains("ExplorationState")) {
             state = ExplorationState.values()[tag.getInt("ExplorationState")];
@@ -966,6 +997,12 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
         if (this.targetStructureName != null) {
             tag.putString("TargetStructureName", this.targetStructureName);
         }
+        tag.putIntArray("GridColors", gridColors);
+        net.minecraft.nbt.ListTag biomeList = new net.minecraft.nbt.ListTag();
+        for (String b : gridBiomes) {
+            biomeList.add(net.minecraft.nbt.StringTag.valueOf(b == null ? "minecraft:plains" : b));
+        }
+        tag.put("GridBiomes", biomeList);
         return tag;
     }
 
@@ -989,6 +1026,15 @@ public class VirtualMappingTableBlockEntity extends BlockEntity implements MenuP
                 if (item != Items.AIR) {
                     installedUpgrades.put(item, upgradesTag.getInt(key));
                 }
+            }
+        }
+        if (tag.contains("GridColors")) {
+            gridColors = tag.getIntArray("GridColors");
+        }
+        if (tag.contains("GridBiomes", 9)) {
+            net.minecraft.nbt.ListTag biomeList = tag.getList("GridBiomes", 8);
+            for (int i = 0; i < Math.min(biomeList.size(), gridBiomes.length); i++) {
+                gridBiomes[i] = biomeList.getString(i);
             }
         }
         syncUpgradesToHiddenSlots();

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UUU",
+    "UUU",
+    "UUU"
+  ],
+  "key": {
+    "U": {
+      "item": "virtualexplorer:upgrade_demolition_master_9x"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:upgrade_demolition_master_81x",
+    "count": 1
+  }
+}

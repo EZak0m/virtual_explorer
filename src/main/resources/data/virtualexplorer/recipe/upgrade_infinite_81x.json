@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UUU",
+    "UUU",
+    "UUU"
+  ],
+  "key": {
+    "U": {
+      "item": "virtualexplorer:upgrade_infinite_9x"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:upgrade_infinite_81x",
+    "count": 1
+  }
+}

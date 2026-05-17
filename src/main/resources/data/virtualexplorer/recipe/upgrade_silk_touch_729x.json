@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UUU",
+    "UUU",
+    "UUU"
+  ],
+  "key": {
+    "U": {
+      "item": "virtualexplorer:upgrade_silk_touch_81x"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:upgrade_silk_touch_729x",
+    "count": 1
+  }
+}

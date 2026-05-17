@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UUU",
+    "UUU",
+    "UUU"
+  ],
+  "key": {
+    "U": {
+      "item": "virtualexplorer:speed_upgrade"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:speed_upgrade_9x",
+    "count": 1
+  }
+}

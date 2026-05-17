@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "UUU",
+    "UUU",
+    "UUU"
+  ],
+  "key": {
+    "U": {
+      "item": "virtualexplorer:parallel_upgrade_81x"
+    }
+  },
+  "result": {
+    "id": "virtualexplorer:parallel_upgrade_729x",
+    "count": 1
+  }
+}
